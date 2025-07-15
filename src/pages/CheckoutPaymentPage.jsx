@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 
-export default function CheckoutFormPage() {
+export default function CheckoutPaymentPage() {
   return (
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-10">
-          <h3 className="fw-bold mb-2 pt-3">填寫結帳資訊</h3>
+          <h3 className="fw-bold mb-2 pt-3">選擇付款方式</h3>
         </div>
       </div>
       {/* 結帳進度條 */}
@@ -18,7 +18,7 @@ export default function CheckoutFormPage() {
                 <span className="text-nowrap">確認訂單</span>
               </li>
               <li className="me-md-6 me-3 position-relative custom-step-line">
-                <i className="fas fa-dot-circle d-md-inline d-block text-center"></i>
+                <i className="fas fa-check-circle d-md-inline d-block text-center"></i>
                 <span className="text-nowrap">填寫表單</span>
               </li>
               <li>
@@ -92,63 +92,102 @@ export default function CheckoutFormPage() {
             </div>
           </div>
         </div>
-        {/* 左側結帳資訊 */}
+        {/* 左側付款方式 */}
         <div className="col-md-6">
-          <form>
-            <p>Contact information</p>
-            <div className="mb-0">
-              <label htmlFor="ContactMail" className="text-muted mb-0">
-                Email
-              </label>
-              <input
-                type="email"
-                className="form-control"
-                id="ContactMail"
-                aria-describedby="emailHelp"
-                placeholder="example@gmail.com"
-              />
+          <div className="accordion" id="accordionExample">
+            <div className="card rounded-0">
+              <div
+                className="card-header bg-white border-0 py-3 collapsed"
+                id="headingOne"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseOne"
+                aria-expanded="true"
+                aria-controls="collapseOne"
+              >
+                <p className="mb-0 position-relative custom-checkout-label">
+                  現金付款
+                </p>
+              </div>
+              <div
+                id="collapseOne"
+                className="collapse show"
+                aria-labelledby="headingOne"
+                data-bs-parent="#accordionExample"
+              ></div>
             </div>
-            <p className="mt-4">Shipping address</p>
-            <div className="mb-2">
-              <label htmlFor="ContactName" className="text-muted mb-0">
-                Name
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="ContactName"
-                placeholder="Carmen A. Rose"
-              />
+            <div className="card rounded-0">
+              <div
+                className="card-header bg-white border-0 py-3"
+                id="headingTwo"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseTwo"
+                aria-expanded="true"
+                aria-controls="collapseTwo"
+              >
+                <p className="mb-0 position-relative custom-checkout-label">
+                  Apple Pay
+                </p>
+              </div>
+              <div
+                id="collapseTwo"
+                className="collapse"
+                aria-labelledby="headingTwo"
+                data-bs-parent="#accordionExample"
+              ></div>
             </div>
-            <div className="mb-2">
-              <label htmlFor="ContactPhone" className="text-muted mb-0">
-                Phone
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="ContactPhone"
-                placeholder="Password"
-              />
+            <div className="card rounded-0">
+              <div
+                className="card-header bg-white border-0 py-3 collapsed"
+                id="headingThree"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseThree"
+                aria-expanded="true"
+                aria-controls="collapseThree"
+              >
+                <p className="mb-0 position-relative custom-checkout-label">
+                  信用卡付款
+                </p>
+              </div>
+              <div
+                id="collapseThree"
+                className="collapse"
+                aria-labelledby="headingThree"
+                data-bs-parent="#accordionExample"
+              >
+                <div className="card-body bg-light ps-5 py-4">
+                  <div className="mb-2">
+                    <label htmlFor="Lorem ipsum1" className="text-muted mb-0">
+                      信用卡號
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="Lorem ipsum1"
+                      placeholder="XXXX-XXXX-XXXX-XXXX"
+                    />
+                  </div>
+                  <div className="mb-0">
+                    <label htmlFor="Lorem ipsum2" className="text-muted mb-0">
+                      有效期限
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="Lorem ipsum2"
+                      placeholder="MM/YY"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="mb-2">
-              <label htmlFor="ContactMessage" className="text-muted mb-0">
-                Message
-              </label>
-              <textarea
-                className="form-control"
-                rows="3"
-                id="ContactMessage"
-                placeholder="message ... "
-              ></textarea>
-            </div>
-          </form>
+          </div>
+
           <div className="d-flex flex-column-reverse flex-md-row mt-4 justify-content-between align-items-md-center align-items-end w-100">
-            <Link to="/products" className="text-dark mt-md-0 mt-3">
-              <i className="fas fa-chevron-left me-2"></i> 返回產品列表
+            <Link to="/checkout-form" className="text-dark mt-md-0 mt-3">
+              <i className="fas fa-chevron-left me-2"></i> 上一步
             </Link>
-            <Link to="/checkout-payment" className="btn btn-dark py-3 px-7">
-              下一步
+            <Link to="/checkout-success" className="btn btn-dark py-3 px-7">
+              確認付款
             </Link>
           </div>
         </div>
