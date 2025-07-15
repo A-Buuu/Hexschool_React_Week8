@@ -1,6 +1,68 @@
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const API_BASE = import.meta.env.VITE_BASE_URL;
+const API_PATH = import.meta.env.VITE_API_BATH;
 
 export default function CheckoutFormPage() {
+  const navigate = useNavigate();
+  const [cart, setCart] = useState({});
+
+  // 取得購物車列表
+  useEffect(() => {
+    getCart();
+  }, []);
+  const getCart = async () => {
+    // setIsScreenLoading(true);
+    try {
+      const res = await axios.get(`${API_BASE}/api/${API_PATH}/cart`);
+      // console.log(res);
+      setCart(res.data.data);
+    } catch (error) {
+      // console.log(error.response.data.message);
+      alert("取得購物車列表失敗");
+    } finally {
+      // setIsScreenLoading(false);
+    }
+  };
+
+  // 從 useForm 解構出需要的函式、狀態
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+  // 表單相關處理
+  const onSubmit = handleSubmit((userInfo) => {
+    // console.log(userInfo);
+    checkout(userInfo);
+  });
+
+  const checkout = async ({ message, ...user }) => {
+    // setIsScreenLoading(true);
+    try {
+      const res = await axios.post(`${API_BASE}/api/${API_PATH}/order`, {
+        data: {
+          user,
+          message,
+        },
+      });
+      // console.log(res.data.orderId);
+      // 清空表單資訊
+      // reset();
+      navigate(`/checkout-payment/${res.data.orderId}`);
+    } catch (error) {
+      console.log(error.response.data.message);
+      // alert(error.response.data.message);
+    } finally {
+      // setIsScreenLoading(false);
+    }
+    // navigate("/checkout-payment");
+  };
+
   return (
     <div className="container">
       <div className="row justify-content-center">
@@ -34,36 +96,23 @@ export default function CheckoutFormPage() {
         {/* 右側訂單資訊 */}
         <div className="col-md-4">
           <div className="border p-4 mb-4">
-            <div className="d-flex">
-              <img
-                src="https://images.unsplash.com/photo-1502743780242-f10d2ce370f3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1916&q=80"
-                alt=""
-                className="me-2"
-                style={{ width: "48px", height: "48px", objectFit: "cover" }}
-              />
-              <div className="w-100">
-                <div className="d-flex justify-content-between">
-                  <p className="mb-0 fw-bold">Lorem ipsum</p>
-                  <p className="mb-0">NT$12,000</p>
+            {cart.carts?.map((cartItem) => (
+              <div key={cartItem.id} className="d-flex mt-2">
+                <img
+                  src={cartItem.product.imageUrl}
+                  alt=""
+                  className="me-2"
+                  style={{ width: "48px", height: "48px", objectFit: "cover" }}
+                />
+                <div className="w-100">
+                  <div className="d-flex justify-content-between">
+                    <p className="mb-0 fw-bold">{cartItem.product.title}</p>
+                    <p className="mb-0">NT${cartItem.total}</p>
+                  </div>
+                  <p className="mb-0 fw-bold">x{cartItem.qty}</p>
                 </div>
-                <p className="mb-0 fw-bold">x1</p>
               </div>
-            </div>
-            <div className="d-flex mt-2">
-              <img
-                src="https://images.unsplash.com/photo-1502743780242-f10d2ce370f3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1916&q=80"
-                alt=""
-                className="me-2"
-                style={{ width: "48px", height: "48px", objectFit: "cover" }}
-              />
-              <div className="w-100">
-                <div className="d-flex justify-content-between">
-                  <p className="mb-0 fw-bold">Lorem ipsum</p>
-                  <p className="mb-0">NT$12,000</p>
-                </div>
-                <p className="mb-0 fw-bold">x1</p>
-              </div>
-            </div>
+            ))}
             <table className="table mt-4 border-top border-bottom text-muted">
               <tbody>
                 <tr>
@@ -73,7 +122,9 @@ export default function CheckoutFormPage() {
                   >
                     小計
                   </th>
-                  <td className="text-end border-0 px-0 pt-4">NT$24,000</td>
+                  <td className="text-end border-0 px-0 pt-4">
+                    NT${cart.total?.toLocaleString()}
+                  </td>
                 </tr>
                 <tr>
                   <th
@@ -82,64 +133,115 @@ export default function CheckoutFormPage() {
                   >
                     付款方式
                   </th>
-                  <td className="text-end border-0 px-0 pt-0 pb-4">ApplePay</td>
+                  <td className="text-end border-0 px-0 pt-0 pb-4">Apple Pay</td>
                 </tr>
               </tbody>
             </table>
             <div className="d-flex justify-content-between mt-4">
               <p className="mb-0 h4 fw-bold">總計</p>
-              <p className="mb-0 h4 fw-bold">NT$24,000</p>
+              <p className="mb-0 h4 fw-bold">
+                NT${cart.final_total?.toLocaleString()}
+              </p>
             </div>
           </div>
         </div>
         {/* 左側結帳資訊 */}
         <div className="col-md-6">
           <form>
-            <p>Contact information</p>
-            <div className="mb-0">
-              <label htmlFor="ContactMail" className="text-muted mb-0">
+            <p>訂購資訊</p>
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">
                 Email
               </label>
               <input
+                {...register("email", {
+                  required: "Email 欄位必填",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$/,
+                    message: "Email 格式錯誤",
+                  },
+                })}
+                id="email"
                 type="email"
-                className="form-control"
-                id="ContactMail"
-                aria-describedby="emailHelp"
-                placeholder="example@gmail.com"
+                className={`form-control ${errors.email && "is-invalid"}`}
+                placeholder="請輸入 Email"
               />
+              {errors.email && (
+                <p className="text-danger my-2">{errors.email.message}</p>
+              )}
             </div>
-            <p className="mt-4">Shipping address</p>
-            <div className="mb-2">
-              <label htmlFor="ContactName" className="text-muted mb-0">
-                Name
+
+            <div className="mb-3">
+              <label htmlFor="name" className="form-label">
+                收件人姓名
               </label>
               <input
+                {...register("name", {
+                  required: "姓名 欄位必填",
+                })}
+                id="name"
                 type="text"
-                className="form-control"
-                id="ContactName"
-                placeholder="Carmen A. Rose"
+                className={`form-control ${errors.name && "is-invalid"}`}
+                placeholder="請輸入姓名"
               />
+
+              {errors.name && (
+                <p className="text-danger my-2">{errors.name.message}</p>
+              )}
             </div>
-            <div className="mb-2">
-              <label htmlFor="ContactPhone" className="text-muted mb-0">
-                Phone
+
+            <div className="mb-3">
+              <label htmlFor="tel" className="form-label">
+                收件人電話
               </label>
               <input
+                {...register("tel", {
+                  required: "電話 欄位必填",
+                  pattern: {
+                    value: /^(0[2-8]\d{7}|09\d{8})$/,
+                    message: "電話 格式錯誤",
+                  },
+                })}
+                id="tel"
                 type="text"
-                className="form-control"
-                id="ContactPhone"
-                placeholder="Password"
+                className={`form-control ${errors.tel && "is-invalid"}`}
+                placeholder="請輸入電話"
               />
+
+              {errors.tel && (
+                <p className="text-danger my-2">{errors.tel.message}</p>
+              )}
             </div>
-            <div className="mb-2">
-              <label htmlFor="ContactMessage" className="text-muted mb-0">
-                Message
+
+            <div className="mb-3">
+              <label htmlFor="address" className="form-label">
+                收件人地址
+              </label>
+              <input
+                {...register("address", {
+                  required: "地址 欄位必填",
+                })}
+                id="address"
+                type="text"
+                className={`form-control ${errors.address && "is-invalid"}`}
+                placeholder="請輸入地址"
+              />
+
+              {errors.address && (
+                <p className="text-danger my-2">{errors.address.message}</p>
+              )}
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="message" className="form-label">
+                留言
               </label>
               <textarea
+                {...register("message")}
+                id="message"
                 className="form-control"
-                rows="3"
-                id="ContactMessage"
-                placeholder="message ... "
+                cols="30"
+                rows="10"
               ></textarea>
             </div>
           </form>
@@ -147,9 +249,13 @@ export default function CheckoutFormPage() {
             <Link to="/products" className="text-dark mt-md-0 mt-3">
               <i className="fas fa-chevron-left me-2"></i> 返回產品列表
             </Link>
-            <Link to="/checkout-payment" className="btn btn-dark py-3 px-7">
+            <button
+              onClick={onSubmit}
+              type="button"
+              className="btn btn-dark py-3 px-7"
+            >
               下一步
-            </Link>
+            </button>
           </div>
         </div>
       </div>

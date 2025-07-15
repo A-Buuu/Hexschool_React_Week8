@@ -36,7 +36,7 @@ const router = createHashRouter([
         element: <CheckoutFormPage />,
       },
       {
-        path: "checkout-payment",
+        path: "checkout-payment/:order_id",
         element: <CheckoutPaymentPage />,
       },
       {

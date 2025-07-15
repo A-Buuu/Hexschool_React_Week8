@@ -1,6 +1,35 @@
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
+
+const API_BASE = import.meta.env.VITE_BASE_URL;
+const API_PATH = import.meta.env.VITE_API_BATH;
 
 export default function CheckoutPaymentPage() {
+  // const [cart, setCart] = useState({});
+  const { order_id } = useParams();
+  const [lastOrderTotalPrice, setLastOrderTotalPrice] = useState(0);
+
+  // 取得購物車列表
+  useEffect(() => {
+    getLastOrder();
+  }, []);
+  const getLastOrder = async () => {
+    // setIsScreenLoading(true);
+    try {
+      const res = await axios.get(
+        `${API_BASE}/api/${API_PATH}/order/${order_id}`
+      );
+      setLastOrderTotalPrice(res.data.order.total);
+      // setCart(res.data.data);
+    } catch (error) {
+      // console.log(error.response.data.message);
+      alert("取得訂單失敗");
+    } finally {
+      // setIsScreenLoading(false);
+    }
+  };
+
   return (
     <div className="container">
       <div className="row justify-content-center">
@@ -34,36 +63,23 @@ export default function CheckoutPaymentPage() {
         {/* 右側訂單資訊 */}
         <div className="col-md-4">
           <div className="border p-4 mb-4">
-            <div className="d-flex">
-              <img
-                src="https://images.unsplash.com/photo-1502743780242-f10d2ce370f3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1916&q=80"
-                alt=""
-                className="me-2"
-                style={{ width: "48px", height: "48px", objectFit: "cover" }}
-              />
-              <div className="w-100">
-                <div className="d-flex justify-content-between">
-                  <p className="mb-0 fw-bold">Lorem ipsum</p>
-                  <p className="mb-0">NT$12,000</p>
+            {/* {cart.carts?.map((cartItem) => (
+              <div key={cartItem.id} className="d-flex mt-2">
+                <img
+                  src={cartItem.product.imageUrl}
+                  alt=""
+                  className="me-2"
+                  style={{ width: "48px", height: "48px", objectFit: "cover" }}
+                />
+                <div className="w-100">
+                  <div className="d-flex justify-content-between">
+                    <p className="mb-0 fw-bold">{cartItem.product.title}</p>
+                    <p className="mb-0">NT${cartItem.total}</p>
+                  </div>
+                  <p className="mb-0 fw-bold">x{cartItem.qty}</p>
                 </div>
-                <p className="mb-0 fw-bold">x1</p>
               </div>
-            </div>
-            <div className="d-flex mt-2">
-              <img
-                src="https://images.unsplash.com/photo-1502743780242-f10d2ce370f3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1916&q=80"
-                alt=""
-                className="me-2"
-                style={{ width: "48px", height: "48px", objectFit: "cover" }}
-              />
-              <div className="w-100">
-                <div className="d-flex justify-content-between">
-                  <p className="mb-0 fw-bold">Lorem ipsum</p>
-                  <p className="mb-0">NT$12,000</p>
-                </div>
-                <p className="mb-0 fw-bold">x1</p>
-              </div>
-            </div>
+            ))} */}
             <table className="table mt-4 border-top border-bottom text-muted">
               <tbody>
                 <tr>
@@ -73,7 +89,9 @@ export default function CheckoutPaymentPage() {
                   >
                     小計
                   </th>
-                  <td className="text-end border-0 px-0 pt-4">NT$24,000</td>
+                  <td className="text-end border-0 px-0 pt-4">
+                    NT${lastOrderTotalPrice.toLocaleString()}
+                  </td>
                 </tr>
                 <tr>
                   <th
@@ -82,13 +100,17 @@ export default function CheckoutPaymentPage() {
                   >
                     付款方式
                   </th>
-                  <td className="text-end border-0 px-0 pt-0 pb-4">ApplePay</td>
+                  <td className="text-end border-0 px-0 pt-0 pb-4">
+                    Apple Pay
+                  </td>
                 </tr>
               </tbody>
             </table>
             <div className="d-flex justify-content-between mt-4">
               <p className="mb-0 h4 fw-bold">總計</p>
-              <p className="mb-0 h4 fw-bold">NT$24,000</p>
+              <p className="mb-0 h4 fw-bold">
+                NT${lastOrderTotalPrice.toLocaleString()}
+              </p>
             </div>
           </div>
         </div>

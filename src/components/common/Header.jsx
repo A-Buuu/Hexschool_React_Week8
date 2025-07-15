@@ -50,7 +50,7 @@ export default function Header() {
     <div className="container d-flex flex-column">
       <nav className="navbar navbar-expand-lg navbar-light">
         <a className="navbar-brand" href="./index.html">
-          Navbar
+          毛孩柑仔店
         </a>
         <button
           className="navbar-toggler"

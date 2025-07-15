@@ -300,7 +300,7 @@ export default function CartPage() {
                         付款方式
                       </th>
                       <td className="text-end border-0 px-0 pt-0 pb-4">
-                        ApplePay
+                        Apple Pay
                       </td>
                     </tr>
                   </tbody>
