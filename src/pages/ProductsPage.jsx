@@ -7,28 +7,14 @@ const API_BASE = import.meta.env.VITE_BASE_URL;
 const API_PATH = import.meta.env.VITE_API_BATH;
 
 export default function ProductsPage() {
-  // const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [isScreenLoading, setIsScreenLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("全部");
 
-  // 取得產品列表
+  // 取得全部產品列表
   useEffect(() => {
-    // const getProducts = async () => {
-    //   setIsScreenLoading(true);
-    //   try {
-    //     const res = await axios.get(`${API_BASE}/api/${API_PATH}/products`);
-    //     // console.log(res.data.products);
-    //     setProducts(res.data.products);
-    //   } catch (error) {
-    //     alert("取得產品失敗");
-    //     // console.log(error.response.data.message);
-    //   } finally {
-    //     setIsScreenLoading(false);
-    //   }
-    // };
-    // getProducts();
     const getAllProducts = async () => {
       setIsScreenLoading(true);
       try {
@@ -44,17 +30,39 @@ export default function ProductsPage() {
     };
     getAllProducts();
   }, []);
+  // 取得篩選後的產品列表
+  useEffect(() => {
+    const getProducts = async () => {
+      setIsScreenLoading(true);
+      try {
+        const res = await axios.get(
+          `${API_BASE}/api/${API_PATH}/products?category=${
+            selectedCategory === "全部" ? "" : selectedCategory
+          }`
+        );
+        // console.log(res.data.products);
+        setProducts(res.data.products);
+      } catch (error) {
+        alert("取得產品失敗");
+        // console.log(error.response.data.message);
+      } finally {
+        setIsScreenLoading(false);
+      }
+    };
+    getProducts();
+  }, [selectedCategory]);
 
   // 篩選分類
   const categories = [
-    '全部', ...new Set(allProducts.map((product) => product.category)),
+    "全部",
+    ...new Set(allProducts.map((product) => product.category)),
   ];
 
   const filteredProducts = allProducts.filter((product) => {
-    if (selectedCategory === '全部') return product;
+    if (selectedCategory === "全部") return product;
 
     return product.category === selectedCategory;
-  })
+  });
 
   // 加入購物車
   const addCart = async (product_id, qty) => {
@@ -130,7 +138,7 @@ export default function ProductsPage() {
                   <div className="card-body py-0">
                     <ul className="list-unstyled">
                       {categories.map((category) => (
-                        <li ket={category}>
+                        <li key={category}>
                           <button
                             type="button"
                             className="btn border-none py-2 d-block text-muted"
@@ -149,7 +157,7 @@ export default function ProductsPage() {
           {/* 右側產品列表 */}
           <div className="col-md-8">
             <div className="row">
-              {filteredProducts.map((product) => (
+              {products.map((product) => (
                 <div className="col-md-6" key={product.id}>
                   <div className="card border-0 mb-4 position-relative position-relative">
                     <img
