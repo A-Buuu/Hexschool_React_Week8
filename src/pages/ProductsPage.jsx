@@ -7,18 +7,34 @@ const API_BASE = import.meta.env.VITE_BASE_URL;
 const API_PATH = import.meta.env.VITE_API_BATH;
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [isScreenLoading, setIsScreenLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("全部");
 
   // 取得產品列表
   useEffect(() => {
-    const getProducts = async () => {
+    // const getProducts = async () => {
+    //   setIsScreenLoading(true);
+    //   try {
+    //     const res = await axios.get(`${API_BASE}/api/${API_PATH}/products`);
+    //     // console.log(res.data.products);
+    //     setProducts(res.data.products);
+    //   } catch (error) {
+    //     alert("取得產品失敗");
+    //     // console.log(error.response.data.message);
+    //   } finally {
+    //     setIsScreenLoading(false);
+    //   }
+    // };
+    // getProducts();
+    const getAllProducts = async () => {
       setIsScreenLoading(true);
       try {
         const res = await axios.get(`${API_BASE}/api/${API_PATH}/products/all`);
         // console.log(res.data.products);
-        setProducts(res.data.products);
+        setAllProducts(res.data.products);
       } catch (error) {
         alert("取得產品失敗");
         // console.log(error.response.data.message);
@@ -26,8 +42,19 @@ export default function ProductsPage() {
         setIsScreenLoading(false);
       }
     };
-    getProducts();
+    getAllProducts();
   }, []);
+
+  // 篩選分類
+  const categories = [
+    '全部', ...new Set(allProducts.map((product) => product.category)),
+  ];
+
+  const filteredProducts = allProducts.filter((product) => {
+    if (selectedCategory === '全部') return product;
+
+    return product.category === selectedCategory;
+  })
 
   // 加入購物車
   const addCart = async (product_id, qty) => {
@@ -89,7 +116,7 @@ export default function ProductsPage() {
                   data-bs-target="#collapseOne"
                 >
                   <div className="d-flex justify-content-between align-items-center pe-1">
-                    <h4 className="mb-0">Lorem ipsum</h4>
+                    <h4 className="mb-0">分類</h4>
                     <i className="fas fa-chevron-down"></i>
                   </div>
                 </div>
@@ -102,129 +129,17 @@ export default function ProductsPage() {
                 >
                   <div className="card-body py-0">
                     <ul className="list-unstyled">
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="card border-0">
-                <div
-                  className="card-header px-0 py-4 bg-white border border-bottom-0 border-top border-start-0 border-end-0 rounded-0"
-                  id="headingTwo"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseTwo"
-                >
-                  <div className="d-flex justify-content-between align-items-center pe-1">
-                    <h4 className="mb-0">Lorem ipsum</h4>
-                    <i className="fas fa-chevron-down"></i>
-                  </div>
-                </div>
-                <div
-                  id="collapseTwo"
-                  className="collapse"
-                  aria-labelledby="headingTwo"
-                  data-bs-parent="#accordionExample"
-                >
-                  <div className="card-body py-0">
-                    <ul className="list-unstyled">
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="card border-0">
-                <div
-                  className="card-header px-0 py-4 bg-white border border-bottom-0 border-top border-start-0 border-end-0 rounded-0"
-                  id="headingThree"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseThree"
-                >
-                  <div className="d-flex justify-content-between align-items-center pe-1">
-                    <h4 className="mb-0">Lorem ipsum</h4>
-                    <i className="fas fa-chevron-down"></i>
-                  </div>
-                </div>
-                <div
-                  id="collapseThree"
-                  className="collapse"
-                  aria-labelledby="headingThree"
-                  data-bs-parent="#accordionExample"
-                >
-                  <div className="card-body py-0">
-                    <ul className="list-unstyled">
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="py-2 d-block text-muted">
-                          Lorem ipsum
-                        </a>
-                      </li>
+                      {categories.map((category) => (
+                        <li ket={category}>
+                          <button
+                            type="button"
+                            className="btn border-none py-2 d-block text-muted"
+                            onClick={() => setSelectedCategory(category)}
+                          >
+                            {category}
+                          </button>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -234,7 +149,7 @@ export default function ProductsPage() {
           {/* 右側產品列表 */}
           <div className="col-md-8">
             <div className="row">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <div className="col-md-6" key={product.id}>
                   <div className="card border-0 mb-4 position-relative position-relative">
                     <img
