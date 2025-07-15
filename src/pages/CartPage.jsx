@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { ClipLoader } from "react-spinners";
 import { Link, useNavigate } from "react-router-dom";
+import Swiper from "swiper";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
 
 const API_BASE = import.meta.env.VITE_BASE_URL;
 const API_PATH = import.meta.env.VITE_API_BATH;
@@ -11,6 +14,7 @@ export default function CartPage() {
   const [cart, setCart] = useState({});
   const [isScreenLoading, setIsScreenLoading] = useState(false);
   const navigate = useNavigate();
+  const swiperRef = useRef(null);
 
   useEffect(() => {
     if(cart.carts?.length === 0) {
@@ -22,6 +26,24 @@ export default function CartPage() {
   // 取得購物車列表
   useEffect(() => {
     getCart();
+
+    // 初始化時建立 swiper 實例
+    new Swiper(swiperRef.current, {
+      modules: [Autoplay],
+      loop: true,
+      autoplay: {
+        delay: 2500,
+        disableOnInteraction: false,
+      },
+      slidesPerView: 2,
+      spaceBetween: 10,
+      breakpoints: {
+        767: {
+          slidesPerView: 3,
+          spaceBetween: 30,
+        },
+      },
+    });
   }, []);
   const getCart = async () => {
     setIsScreenLoading(true);
@@ -297,8 +319,8 @@ export default function CartPage() {
           </div>
 
           <div className="my-5">
-            <h3 className="fw-bold">Lorem ipsum dolor sit amet</h3>
-            <div className="swiper-container mt-4 mb-5">
+            <h3 className="fw-bold">類似產品</h3>
+            <div ref={swiperRef} className="swiper mt-4 mb-5">
               <div className="swiper-wrapper">
                 <div className="swiper-slide">
                   <div className="card border-0 mb-4 position-relative position-relative">
@@ -314,7 +336,7 @@ export default function CartPage() {
                       </h4>
                       <p className="card-text mb-0">
                         NT$1,080
-                        <span className="text-muted ">
+                        <span className="text-muted ms-2">
                           <del>NT$1,200</del>
                         </span>
                       </p>
@@ -336,7 +358,7 @@ export default function CartPage() {
                       </h4>
                       <p className="card-text mb-0">
                         NT$1,080
-                        <span className="text-muted ">
+                        <span className="text-muted ms-2">
                           <del>NT$1,200</del>
                         </span>
                       </p>
@@ -358,7 +380,7 @@ export default function CartPage() {
                       </h4>
                       <p className="card-text mb-0">
                         NT$1,080
-                        <span className="text-muted ">
+                        <span className="text-muted ms-2">
                           <del>NT$1,200</del>
                         </span>
                       </p>
@@ -380,7 +402,7 @@ export default function CartPage() {
                       </h4>
                       <p className="card-text mb-0">
                         NT$1,080
-                        <span className="text-muted ">
+                        <span className="text-muted ms-2">
                           <del>NT$1,200</del>
                         </span>
                       </p>
@@ -402,7 +424,7 @@ export default function CartPage() {
                       </h4>
                       <p className="card-text mb-0">
                         NT$1,080
-                        <span className="text-muted ">
+                        <span className="text-muted ms-2">
                           <del>NT$1,200</del>
                         </span>
                       </p>
