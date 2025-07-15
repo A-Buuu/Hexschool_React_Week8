@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCartData } from "../redux/cartSlice";
+import Swiper from "swiper";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
 
 const API_BASE = import.meta.env.VITE_BASE_URL;
 const API_PATH = import.meta.env.VITE_API_BATH;
@@ -15,12 +18,31 @@ export default function ProductDetailPage() {
   const [qtySelect, setQtySelect] = useState(1);
   const [isScreenLoading, setIsScreenLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const swiperRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // 取得購物車列表
   useEffect(() => {
     getCart();
+
+    // 初始化時建立 swiper 實例
+    new Swiper(swiperRef.current, {
+      modules: [Autoplay],
+      loop: true,
+      autoplay: {
+        delay: 2500,
+        disableOnInteraction: false,
+      },
+      slidesPerView: 2,
+      spaceBetween: 10,
+      breakpoints: {
+        767: {
+          slidesPerView: 3,
+          spaceBetween: 30,
+        },
+      },
+    });
   }, []);
   const getCart = async () => {
     setIsScreenLoading(true);
@@ -99,7 +121,7 @@ export default function ProductDetailPage() {
                   />
                 </div>
               </div>
-              <a
+              {/* <a
                 className="carousel-control-prev"
                 href="#carouselExampleControls"
                 role="button"
@@ -122,7 +144,7 @@ export default function ProductDetailPage() {
                   aria-hidden="true"
                 ></span>
                 <span className="sr-only">Next</span>
-              </a>
+              </a> */}
             </div>
           </div>
           {/* 右側說明欄位 */}
@@ -211,119 +233,21 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        <h3 className="fw-bold">Lorem ipsum dolor sit amet</h3>
-        <div className="swiper-container mt-4 mb-5">
+        {/* 輪播圖片 */}
+        <h3 className="fw-bold">其他圖片</h3>
+        <div ref={swiperRef} className="swiper mt-4 mb-5">
           <div className="swiper-wrapper">
-            <div className="swiper-slide">
-              <div className="card border-0 mb-4 position-relative position-relative">
-                <img
-                  src="https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
-                  className="card-img-top rounded-0"
-                  alt="..."
-                />
-                <a href="#" className="text-dark"></a>
-                <div className="card-body p-0">
-                  <h4 className="mb-0 mt-3">
-                    <a href="#">Lorem ipsum</a>
-                  </h4>
-                  <p className="card-text mb-0">
-                    NT$1,080
-                    <span className="text-muted ">
-                      <del>NT$1,200</del>
-                    </span>
-                  </p>
-                  <p className="text-muted mt-3"></p>
+            {product.imagesUrl?.map((imgUrl) => (
+              <div key={imgUrl} className="swiper-slide">
+                <div className="card border-0 mb-4 position-relative position-relative">
+                  <img
+                    src={imgUrl}
+                    className="card-img-top rounded-5"
+                    alt="..."
+                  />
                 </div>
               </div>
-            </div>
-            <div className="swiper-slide">
-              <div className="card border-0 mb-4 position-relative position-relative">
-                <img
-                  src="https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
-                  className="card-img-top rounded-0"
-                  alt="..."
-                />
-                <a href="#" className="text-dark"></a>
-                <div className="card-body p-0">
-                  <h4 className="mb-0 mt-3">
-                    <a href="#">Lorem ipsum</a>
-                  </h4>
-                  <p className="card-text mb-0">
-                    NT$1,080
-                    <span className="text-muted ">
-                      <del>NT$1,200</del>
-                    </span>
-                  </p>
-                  <p className="text-muted mt-3"></p>
-                </div>
-              </div>
-            </div>
-            <div className="swiper-slide">
-              <div className="card border-0 mb-4 position-relative position-relative">
-                <img
-                  src="https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
-                  className="card-img-top rounded-0"
-                  alt="..."
-                />
-                <a href="#" className="text-dark"></a>
-                <div className="card-body p-0">
-                  <h4 className="mb-0 mt-3">
-                    <a href="#">Lorem ipsum</a>
-                  </h4>
-                  <p className="card-text mb-0">
-                    NT$1,080
-                    <span className="text-muted ">
-                      <del>NT$1,200</del>
-                    </span>
-                  </p>
-                  <p className="text-muted mt-3"></p>
-                </div>
-              </div>
-            </div>
-            <div className="swiper-slide">
-              <div className="card border-0 mb-4 position-relative position-relative">
-                <img
-                  src="https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
-                  className="card-img-top rounded-0"
-                  alt="..."
-                />
-                <a href="#" className="text-dark"></a>
-                <div className="card-body p-0">
-                  <h4 className="mb-0 mt-3">
-                    <a href="#">Lorem ipsum</a>
-                  </h4>
-                  <p className="card-text mb-0">
-                    NT$1,080
-                    <span className="text-muted ">
-                      <del>NT$1,200</del>
-                    </span>
-                  </p>
-                  <p className="text-muted mt-3"></p>
-                </div>
-              </div>
-            </div>
-            <div className="swiper-slide">
-              <div className="card border-0 mb-4 position-relative position-relative">
-                <img
-                  src="https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
-                  className="card-img-top rounded-0"
-                  alt="..."
-                />
-                <a href="#" className="text-dark"></a>
-                <div className="card-body p-0">
-                  <h4 className="mb-0 mt-3">
-                    <a href="#">Lorem ipsum</a>
-                  </h4>
-                  <p className="card-text mb-0">
-                    NT$1,080
-                    <span className="text-muted ">
-                      <del>NT$1,200</del>
-                    </span>
-                  </p>
-                  <p className="text-muted mt-3"></p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
