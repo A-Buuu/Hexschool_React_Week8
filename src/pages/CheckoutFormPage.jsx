@@ -60,7 +60,6 @@ export default function CheckoutFormPage() {
     } finally {
       // setIsScreenLoading(false);
     }
-    // navigate("/checkout-payment");
   };
 
   return (
