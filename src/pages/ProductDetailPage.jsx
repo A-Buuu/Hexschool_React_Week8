@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateCartData } from "../redux/cartSlice";
 
 const API_BASE = import.meta.env.VITE_BASE_URL;
 const API_PATH = import.meta.env.VITE_API_BATH;
@@ -14,6 +16,25 @@ export default function ProductDetailPage() {
   const [isScreenLoading, setIsScreenLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // 取得購物車列表
+  useEffect(() => {
+    getCart();
+  }, []);
+  const getCart = async () => {
+    setIsScreenLoading(true);
+    try {
+      const res = await axios.get(`${API_BASE}/api/${API_PATH}/cart`);
+      // console.log(res);
+      dispatch(updateCartData(res.data.data))
+    } catch (error) {
+      // console.log(error.response.data.message);
+      alert("取得購物車列表失敗");
+    } finally {
+      setIsScreenLoading(false);
+    }
+  };
 
   // 取得單一產品
   useEffect(() => {
@@ -48,6 +69,7 @@ export default function ProductDetailPage() {
       });
       // console.log(res);
       alert(res.data.message);
+      getCart();
     } catch (error) {
       // console.log(error.response.data.message);
       alert("加入購物車失敗");
@@ -355,7 +377,7 @@ export default function ProductDetailPage() {
   //                 />
   //               )}
   //             </button>
-  //           </div>            
+  //           </div>
   //           <Link to="/products" className="btn btn-secondary mt-5">
   //             回到產品列表
   //           </Link>
