@@ -13,6 +13,25 @@ export default function ProductsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("全部");
 
+  // 將 "收藏" 儲存在 localStorage 並取用
+  const [wishList, setWishList] = useState(() => {
+    const initWishList = localStorage.getItem("wishList")
+      ? JSON.parse(localStorage.getItem("wishList"))
+      : {};
+
+    return initWishList;
+  });
+
+  const toggleWishListItem = (product_id) => {
+    const newWishList = {
+      ...wishList,
+      [product_id]: !wishList[product_id],
+    };
+
+    localStorage.setItem("wishList", JSON.stringify(newWishList));
+    setWishList(newWishList);
+  }
+
   // 取得全部產品列表
   useEffect(() => {
     const getAllProducts = async () => {
@@ -166,12 +185,17 @@ export default function ProductsPage() {
                       alt={product.title}
                     />
                     {/* 收藏 icon */}
-                    <a href="#" className="text-dark">
+                    <button
+                      type="button"
+                      className="btn border-none text-dark"
+                      onClick={() => toggleWishListItem(product.id)}
+                    >
                       <i
-                        className="far fa-heart position-absolute"
+                        className={`${wishList[product.id] ? "fas" : "far"} fa-heart position-absolute`}
                         style={{ right: "16px", top: "16px" }}
                       ></i>
-                    </a>
+                    </button>
+
                     <div className="card-body p-0">
                       <h4 className="mb-0 mt-3">
                         <Link to={`/products/${product.id}`}>
