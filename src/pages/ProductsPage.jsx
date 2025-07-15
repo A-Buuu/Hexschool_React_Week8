@@ -10,7 +10,6 @@ export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [isScreenLoading, setIsScreenLoading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("全部");
 
   // 將 "收藏" 儲存在 localStorage 並取用
@@ -30,7 +29,7 @@ export default function ProductsPage() {
 
     localStorage.setItem("wishList", JSON.stringify(newWishList));
     setWishList(newWishList);
-  }
+  };
 
   // 取得全部產品列表
   useEffect(() => {
@@ -51,25 +50,26 @@ export default function ProductsPage() {
   }, []);
   // 取得篩選後的產品列表
   useEffect(() => {
-    const getProducts = async () => {
-      setIsScreenLoading(true);
-      try {
-        const res = await axios.get(
-          `${API_BASE}/api/${API_PATH}/products?category=${
-            selectedCategory === "全部" ? "" : selectedCategory
-          }`
-        );
-        // console.log(res.data.products);
-        setProducts(res.data.products);
-      } catch (error) {
-        alert("取得產品失敗");
-        // console.log(error.response.data.message);
-      } finally {
-        setIsScreenLoading(false);
-      }
-    };
     getProducts();
   }, [selectedCategory]);
+  const getProducts = async (page) => {
+    setIsScreenLoading(true);
+    try {
+      const res = await axios.get(
+        `${API_BASE}/api/${API_PATH}/products?page=${page}&category=${
+          selectedCategory === "全部" ? "" : selectedCategory
+        }`
+      );
+      // console.log(res.data);
+      setProducts(res.data.products);
+      setPageInfo(res.data.pagination);
+    } catch (error) {
+      alert("取得產品失敗");
+      // console.log(error.response.data.message);
+    } finally {
+      setIsScreenLoading(false);
+    }
+  };
 
   // 篩選分類
   const categories = [
@@ -83,24 +83,11 @@ export default function ProductsPage() {
     return product.category === selectedCategory;
   });
 
-  // 加入購物車
-  const addCart = async (product_id, qty) => {
-    setIsLoading(true);
-    try {
-      const res = await axios.post(`${API_BASE}/api/${API_PATH}/cart`, {
-        data: {
-          product_id,
-          qty,
-        },
-      });
-      // console.log(res);
-      alert(res.data.message);
-    } catch (error) {
-      // console.log(error.response.data.message);
-      alert("加入購物車失敗");
-    } finally {
-      setIsLoading(false);
-    }
+  // 頁面處理
+  const [pageInfo, setPageInfo] = useState({});
+  const handlePageChange = (page) => {    
+    console.log("頁面: ", page);
+    getProducts(page);
   };
 
   return (
@@ -118,12 +105,12 @@ export default function ProductsPage() {
             left: 0,
             right: 0,
             backgroundImage:
-              "url(https://images.unsplash.com/photo-1480399129128-2066acb5009e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80)",
-            backgroundPosition: "center center",
-            opacity: 0.1,
+              "url(https://images.unsplash.com/photo-1573435567032-ff5982925350?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+            backgroundPosition: "center 20%",
+            opacity: 0.2,
           }}
         ></div>
-        <h2 className="fw-bold">Lorem ipsum.</h2>
+        <h2 className="fw-bold">吃好、用好、開心玩</h2>
       </div>
 
       <div className="container mt-md-5 mt-3 mb-7">
@@ -191,7 +178,9 @@ export default function ProductsPage() {
                       onClick={() => toggleWishListItem(product.id)}
                     >
                       <i
-                        className={`${wishList[product.id] ? "fas" : "far"} fa-heart position-absolute`}
+                        className={`${
+                          wishList[product.id] ? "fas" : "far"
+                        } fa-heart position-absolute`}
                         style={{ right: "16px", top: "16px" }}
                       ></i>
                     </button>
@@ -217,28 +206,38 @@ export default function ProductsPage() {
             {/* 頁碼元件 */}
             <nav className="d-flex justify-content-center">
               <ul className="pagination">
-                <li className="page-item">
-                  <a className="page-link" href="#" aria-label="Previous">
+                <li className={`page-item ${!pageInfo.has_pre && "disabled"}`}>
+                  <a
+                    className="page-link"
+                    aria-label="Previous"
+                    onClick={() => handlePageChange(pageInfo.current_page - 1)}
+                  >
                     <span aria-hidden="true">&laquo;</span>
                   </a>
                 </li>
-                <li className="page-item active">
-                  <a className="page-link" href="#">
-                    1
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    2
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    3
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#" aria-label="Next">
+                {Array.from({ length: pageInfo.total_pages }).map(
+                  (_, index) => (
+                    <li
+                      key={index}
+                      className={`page-item ${
+                        pageInfo.current_page === index + 1 && "active"
+                      }`}
+                    >
+                      <a
+                        className="page-link"
+                        onClick={() => handlePageChange(index + 1)}
+                      >
+                        {index + 1}
+                      </a>
+                    </li>
+                  )
+                )}
+                <li className={`page-item ${!pageInfo.has_next && "disabled"}`}>
+                  <a
+                    className="page-link"
+                    aria-label="Next"
+                    onClick={() => handlePageChange(pageInfo.current_page + 1)}
+                  >
                     <span aria-hidden="true">&raquo;</span>
                   </a>
                 </li>
