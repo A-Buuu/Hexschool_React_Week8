@@ -275,7 +275,7 @@ export default function CartPage() {
                         scope="row"
                         className="border-0 px-0 pt-0 pb-4 font-weight-normal"
                       >
-                        Payment
+                        付款方式
                       </th>
                       <td className="text-end border-0 px-0 pt-0 pb-4">
                         ApplePay
