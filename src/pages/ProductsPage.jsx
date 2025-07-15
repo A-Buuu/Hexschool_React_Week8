@@ -251,12 +251,14 @@ export default function ProductsPage() {
                     </a>
                     <div className="card-body p-0">
                       <h4 className="mb-0 mt-3">
-                        <Link to={`/products/${product.id}`}>{product.title}</Link>
+                        <Link to={`/products/${product.id}`}>
+                          {product.title}
+                        </Link>
                       </h4>
                       <p className="card-text mb-0">
-                        NT${product.price}
+                        NT${product.price?.toLocaleString()}
                         <span className="ms-2 text-muted ">
-                          <del>NT${product.origin_price}</del>
+                          <del>NT${product.origin_price?.toLocaleString()}</del>
                         </span>
                       </p>
                       <p className="text-muted mt-3"></p>
