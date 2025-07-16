@@ -170,6 +170,11 @@ export default function ProductsPage() {
                       src={product.imageUrl}
                       className="card-img-top rounded-0"
                       alt={product.title}
+                      style={{
+                        width: "420px",
+                        height: "420px",
+                        objectFit: "cover",
+                      }}
                     />
                     {/* 收藏 icon */}
                     <button
